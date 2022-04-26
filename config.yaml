@@ -1,0 +1,20 @@
+default:
+
+  conexion: "Default"
+  numero: 1
+
+desa:
+
+  conexion: "Nos conectamos a desa"
+  numero: 2
+  lista: 
+    - 1
+    - 2
+  
+prod:
+
+  conexion: "Nos conectamos a prod"
+  numero: 3
+  lista:
+    - 3
+    - 4

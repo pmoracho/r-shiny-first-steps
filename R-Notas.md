@@ -28,7 +28,7 @@ M. and Wilks, A. R. (1988) The New S Language. Wadsworth & Brooks/Cole. (base pa
 
 Información en la forma de:
   
-  + dato crudo por pantalla
++ dato crudo por pantalla
 + exportación de datos
 + Gráficos
 + Informes estáticos - Rmarkdown
@@ -70,35 +70,30 @@ Información en la forma de:
 
 
 ## Tipos de datos
+    
+    # Logical
+    TRUE != FALSE
+    
+    # Numeric
+    x <- 1.0
+    
+    # Integer
+    x <- 123L
+    class(x)
+    
+    # Complex
+    sqrt(−1+0i)
+    
+    # Character
+    x <- "hola"
+    
+    ## Reciclado
+  
+    v3 <- runif(20)
+    
+    v3 + 10
+    v3 + c(10,20)
 
-# Logical
-TRUE != FALSE
-
-# Numeric
-x <- 1.0
-
-# Integer
-x <- 123L
-class(x)
-
-# Complex
-sqrt(−1+0i)
-
-# Character
-x <- "hola"
-
-## Reciclado
-
-v3 <- runif(20)
-
-v3 + 10
-v3 + c(10,20)
-
-
-## R en Windows
-
-* Path al estilo unix: `file.path("a", "b", "c")`
-* Instalación y eventual recompilación de paquetes (`Rtools`)
 
 ## No existen los datos escalares
 
@@ -113,46 +108,50 @@ significado opuesto a «vector», para distinguir la idea de procesado de
 vectores, en el diseño de procesadores computacionales.
 
 
-# Esperamos una cadena escalar
-hola <- function(nombre) {
-  if (substr(nombre, nchar(nombre), nchar(nombre)) == 'a') {
-    paste('Hola Señora', nombre)
-  } else {
-    paste('Hola Señor', nombre)
-  }
-}
+    # Esperamos una cadena escalar
+    hola <- function(nombre) {
+      if (substr(nombre, nchar(nombre), nchar(nombre)) == 'a') {
+        paste('Hola Señora', nombre)
+      } else {
+        paste('Hola Señor', nombre)
+      }
+    }
+    
+    # Controlamos que sea una cadena única
+    hola <- function(nombre) {
+      if (length(v)!=1) stop("nombre must be a character vector of length 1")
+      if (substr(nombre, nchar(nombre), nchar(nombre)) == 'a') {
+        paste('Hola Señora', nombre)
+      } else {
+        paste('Hola Señor', nombre)
+      }
+    }
+    
+    # O preparamos la función para trabajar sobre vectores
+    hola_vctr <- function(nombre) {
+      ifelse(substr(nombre, nchar(nombre), nchar(nombre)) == 'a',
+             paste('Hola Señora', nombre),
+             paste('Hola Señor', nombre)
+      )
+    }
+    v <- "maria"
+    hola(v)
+    
+    
+    v <- c("maria", "juan pablo")
+    hola(v)
+    
+    hola_vctr(v)
 
-# Controlamos que sea una cadena única
-hola <- function(nombre) {
-  if (length(v)!=1) stop("nombre must be a character vector of length 1")
-  if (substr(nombre, nchar(nombre), nchar(nombre)) == 'a') {
-    paste('Hola Señora', nombre)
-  } else {
-    paste('Hola Señor', nombre)
-  }
-}
+## R en Windows
 
-# O preparamos la función para trabajar sobre vectores
-hola_vctr <- function(nombre) {
-  ifelse(substr(nombre, nchar(nombre), nchar(nombre)) == 'a',
-         paste('Hola Señora', nombre),
-         paste('Hola Señor', nombre)
-  )
-}
-v <- "maria"
-hola(v)
-
-
-v <- c("maria", "juan pablo")
-hola(v)
-
-hola_vctr(v)
-
+* Path al estilo unix: `file.path("a", "b", "c")`
+* Instalación y eventual recompilación de paquetes (`Rtools`)
 
 ## Herrmientas para buenas prácticas
 
 * **[`renv`][renv]**: Control sobre las dependencias
-* **lOGGING**: Registro de actividad
+* **Logging**: Registro de actividad
 * **[`usethis`][usethis]**: Automatización de tareas repetitivas de desarrollo para un proyecto R.
 * **[`assertthat`][assertthat]**: comprobar las condiciones previas y
 posteriores de una función
@@ -179,8 +178,8 @@ posteriores de una función
 
 Instalación de versión específica
 
-require(devtools)
-install_version("ggplot2", version = "0.9.1", repos = "http://cran.us.r-project.org")
+    require(devtools)
+    install_version("ggplot2", version = "0.9.1", repos = "http://cran.us.r-project.org")
 
 
 ### Entornos Virtuales [renv][renv]
@@ -202,9 +201,9 @@ install_version("ggplot2", version = "0.9.1", repos = "http://cran.us.r-project.
 ### logging
 
 * [logger][logger]
+* [dyn.log][dyn.log]
 * [log4r][log4r]
 * [lgr][lgr]
-* [dyn.log][dyn.log]
 * [futile.logger][futile.logger]
 
 
@@ -216,6 +215,7 @@ Automatización de tareas repetitivas de desarrollo.
 
 ### Assertions
 
+* [assertthat][assertthat]
 * Asegurar ciertas condiciones o supuestos
 * Útil en el desarrollo inicial, en especial si hay multiples colaboradores
 * Por lo general se usan durante el desarrollo pero se quitan en producción
@@ -224,68 +224,67 @@ Automatización de tareas repetitivas de desarrollo.
 
 Ejemplos
 
-library(assertthat)
-
-x <- "x"
-x <- 1:10
-
-stopifnot(is.numeric(x))
-assert_that(is.numeric(x))
-
-stopifnot(length(x) == 5)
-assert_that(length(x) == 5)
-
-is_odd <- function(x) {
-  assert_that(is.numeric(x),
-              length(x) == 1,
-              x < 5)
-  x %% 2 == 1
-}
-
-is_odd(6)
-is_odd("6")
-is_odd(1:2)
-
-
-options(isAssertionDisabled = TRUE)
-options(isAssertionDisabled = FALSE)
-
-x <- "cadena"
-assert_that(is.numeric(x))
-assert_that(is.numeric(1))
-
-assert_that <- function (..., env = parent.frame()) {
-  if (isTRUE(getOption("isAssertionDisabled"))) return(TRUE)
-  res <- see_if(..., env = env)
-  if (res)
-    return(TRUE)
-  stop(assertthat:::assertError(attr(res, "msg")))
-}
-
+    library(assertthat)
+    
+    x <- "x"
+    x <- 1:10
+    
+    stopifnot(is.numeric(x))
+    assert_that(is.numeric(x))
+    
+    stopifnot(length(x) == 5)
+    assert_that(length(x) == 5)
+    
+    is_odd <- function(x) {
+      assert_that(is.numeric(x),
+                  length(x) == 1,
+                  x < 5)
+      x %% 2 == 1
+    }
+    
+    is_odd(6)
+    is_odd("6")
+    is_odd(1:2)
+    
+    
+    options(isAssertionDisabled = TRUE)
+    options(isAssertionDisabled = FALSE)
+    
+    x <- "cadena"
+    assert_that(is.numeric(x))
+    assert_that(is.numeric(1))
+    
+    assert_that <- function (..., env = parent.frame()) {
+      if (isTRUE(getOption("isAssertionDisabled"))) return(TRUE)
+      res <- see_if(..., env = env)
+      if (res)
+        return(TRUE)
+      stop(assertthat:::assertError(attr(res, "msg")))
+    }
 
 ### [`goodpractice`][goodpractice]
 
 Dar consejos sobre buenas prácticas al construir paquetes R. Los consejos incluyen funciones y sintaxis a evitar, estructura del paquete, complejidad del código, formateo del código, etc.
 
-install.packages("goodpractice")
-
-# Informe general
-library(goodpractice)
-gp("<my-package>")
-
-# Ver los checks disponibles
-all_checks()
-
-# ejecutar solo ciertos checks
-checks <- gp(pkg_path, checks = "description_url")
-checks
-
-# Que checks se ejecutaron/fallaron
-checks(checks)
-failed_checks(checks)
-
-# Resultados
-results(g)
+    install.packages("goodpractice")
+    
+    # Informe general
+    library(goodpractice)
+    gp("<my-package>")
+    
+    # Ver los checks disponibles
+    all_checks()
+    
+    # ejecutar solo ciertos checks
+    checks <- gp(pkg_path, checks = "description_url")
+    checks
+    
+    # Que checks se ejecutaron/fallaron
+    checks(checks)
+    failed_checks(checks)
+    
+    # Resultados
+    results(g)
 
 ### [`testthat`][testthat]
 
@@ -295,7 +294,7 @@ mejoras que eventualmente "rompen" codigo existente, pero se puede optar por
 usar las nuevas versiones con la compatibilidad hacia atrás o la nueva
 "edición".
 
-install.packages("testthat")
+    install.packages("testthat")
 
 La edición 3 que es recomendable implementar hace uso del paquete [`waldo`][waldo] que es una API para comparación de objetos R que ofrece una mejor experiencia de usuario.
 
@@ -303,56 +302,86 @@ El uso de la edición 3 se hace indicando la cadena `Config/testthat/edition: 3`
 
 #### Ejemplos de `expect_equal()` y `expect_identical()`:
 
-local_edition(2)
-local_edition(3)
-
-expect_equal(mtcars[-1], mtcars)
-
-f1 <- factor(letters[1:3])
-f2 <- factor(letters[1:3], levels = letters[1:4])
-
-f1
-f2
-
-expect_equal(f1, f2)
-
-expect_identical(1/3 + .1 - .1, 1/3)
-expect_identical(1/3 + .1 -. 1, 1/3, tolerance = testthat_tolerance())
+    local_edition(2)
+    local_edition(3)
+    
+    expect_equal(mtcars[-1], mtcars)
+    
+    f1 <- factor(letters[1:3])
+    f2 <- factor(letters[1:3], levels = letters[1:4])
+    
+    f1
+    f2
+    
+    expect_equal(f1, f2)
+    
+    expect_identical(1/3 + .1 - .1, 1/3)
+    expect_identical(1/3 + .1 -. 1, 1/3, tolerance = testthat_tolerance())
 
 
 #### **Snapshot** testing
 
-* Captura los casos de prueba en una archivo externo .md
+* Captura los casos de prueba en una archivo externo `.md`
 * La verificación posterior se hace contra ese archivo
 * Ideal para comparaciones complejas
-* Salida .Md pensada para compartir en github
+* Salida `.Md` pensada para compartir en github
 * puede tener múltiples "expectations"
-* Se debe incluir los .md  en el paquete
+  * Se debe incluir los `.md` en el paquete
+
 ---
-  
-  mi_funcion <- function() {
-    library(ggplot2)
-    g <- ggplot(data=mtcars, mapping=aes(mpg, cyl)) + geom_point()
-    toString(g)
-  }
-
-test_that("mi función funciona!", {
-  local_edition(3)
-  out <- mi_funcion()
-  expect_snapshot_output(out)
-})
-
-# snapshot_accept('mi_funcion')
-# snapshot_review("mi_funcion") # Instalar shiny y diffviewer
+    library(testthat)
+    
+    # Correr como test, no interactivamente
+    # Primera ejecución de la función genera el golden test ver carpeta _snaps
+    mi_funcion <- function() {
+      library(ggplot2)
+      g <- ggplot(data=mtcars, mapping=aes(mpg, cyl)) + geom_point()
+      toString(g)
+    }
+    
+    # Descomentar para hacer fallar el test
+    # Ver carpeta _snaps
+    
+    # mi_funcion <- function() {
+    #   library(ggplot2)
+    #   g <- ggplot(data=mtcars, mapping=aes(disp, cyl)) + geom_point()
+    #   toString(g)
+    # }
+    # 
+    
+    test_that("mi_funcion", {
+      local_edition(3)
+      out <- mi_funcion()
+      expect_snapshot_output(out)
+    })
+    
+    # Para revisar la diferencia
+    # Instalar shiny y diffviewer
+    # snapshot_review("mi_funcion")
+    
+    # Para aceptar el caso nuevo (reemplaza el anterior)
+    # snapshot_accept('mi_funcion')
 
 
 #### ¿y por que no validar los gráficos?
 
-library(vdiffr)
-test_that("ggplot2 histogram", {
-  p <- ggplot(mtcars) + geom_histogram(aes(hp))
-  expect_doppelganger("default histogram", p)
-})
+    library(testthat)
+    
+    # 1. Definimos una función que devuelve una gráfico
+    mi_funcion_grafica <- function() {
+      library(ggplot2)
+      ggplot(mtcars, aes(disp)) + geom_histogram(bins = 30)
+    }
+    
+    # 2. Ejecutamos el test no interactivamente y se genera un snapshot
+    test_that("histograms not draw correctly", {
+      vdiffr::expect_doppelganger("ggplot2 histogram", mi_funcion_grafica())
+    })
+    
+    
+    # 3. Modificar mi_funcion_grafica() par que retorne otro gráfico y correr el test
+    # 4. snapshot_review() para revisar
+
 
 #### Parallel
 
@@ -364,6 +393,7 @@ función `testthat::set_parallel(TRUE)` en el script de inicialización.
 * Hay un overhead por la carga eventual de entornos y paquetes
 * Cuidado con los tests que dependen de un orden o de una inicialización previa
 
+
 ### [`config`][config]
 
 * Extracción de constantes asociados a Perfiles (dev/test/prod)
@@ -373,10 +403,32 @@ función `testthat::set_parallel(TRUE)` en el script de inicialización.
 
 Comandos
 
-Sys.setenv(R_CONFIG_ACTIVE = "desa")
-cfg <- config::get(file="config.yml")
+    Sys.setenv(R_CONFIG_ACTIVE = "desa")
+    cfg <- config::get(file="config.yml")
 
 
+Ejemplo de `yml`
+
+    default:
+    
+      conexion: "Default"
+      numero: 1
+    
+    desa:
+    
+      conexion: "Nos conectamos a desa"
+      numero: 2
+      lista: 
+        - 1
+        - 2
+      
+    prod:
+    
+      conexion: "Nos conectamos a prod"
+      numero: 3
+      lista:
+        - 3
+        - 4
 
 
 
@@ -420,3 +472,4 @@ creación de paquetes en R
 [lgr]: https://github.com/s-fleck/lgr/
   [dyn.log]: https://github.com/bmoretz/dyn.log
 [futile.logger]: https://github.com/zatonovo/futile.logger
+[assertthat]: https://github.com/hadley/assertthat
